@@ -200,7 +200,7 @@ void paintExtendedImage(
       canvas.drawImageRect(image, sourceRect, destinationRect, paint);
     } else {
       final ImageTilingInfo info =
-          createTilingInfo(repeat, rect, destinationRect, sourceRect);
+          TileMode(repeat, rect, destinationRect, sourceRect);
       final ImageShader shader = ImageShader(
           image, info.tmx, info.tmy, info.transform.storage,
           filterQuality: filterQuality);
