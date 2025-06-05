@@ -21,16 +21,16 @@ class PullToRefreshHeader extends StatelessWidget {
       return Container();
     }
     String text = '';
-    if (info!.mode == PullToRefreshIndicatorMode.armed) {
+    if (info!.mode == RefreshIndicatorMode.armed) {
       text = 'Release to refresh';
-    } else if (info!.mode == PullToRefreshIndicatorMode.refresh ||
-        info!.mode == PullToRefreshIndicatorMode.snap) {
+    } else if (info!.mode == RefreshIndicatorMode.refresh ||
+        info!.mode == RefreshIndicatorMode.snap) {
       text = 'Loading...';
-    } else if (info!.mode == PullToRefreshIndicatorMode.done) {
+    } else if (info!.mode == RefreshIndicatorMode.done) {
       text = 'Refresh completed.';
-    } else if (info!.mode == PullToRefreshIndicatorMode.drag) {
+    } else if (info!.mode == RefreshIndicatorMode.drag) {
       text = 'Pull to refresh';
-    } else if (info!.mode == PullToRefreshIndicatorMode.canceled) {
+    } else if (info!.mode == RefreshIndicatorMode.canceled) {
       text = 'Cancel refresh';
     }
 

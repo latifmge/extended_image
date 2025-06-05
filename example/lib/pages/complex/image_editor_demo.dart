@@ -221,9 +221,9 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                   initialValue: _cropLayerPainter,
                   itemBuilder: (BuildContext context) {
                     return <PopupMenuEntry<EditorCropLayerPainter>>[
-                      const PopupMenuItem<EditorCropLayerPainter>(
+                      PopupMenuItem<EditorCropLayerPainter>(
                         child: Row(
-                          children: <Widget>[
+                          children: const <Widget>[
                             Icon(
                               Icons.rounded_corner_sharp,
                               color: Colors.blue,
@@ -234,12 +234,12 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                             Text('Default'),
                           ],
                         ),
-                        value: EditorCropLayerPainter(),
+                        value: const EditorCropLayerPainter(),
                       ),
                       const PopupMenuDivider(),
-                      const PopupMenuItem<EditorCropLayerPainter>(
+                      PopupMenuItem<EditorCropLayerPainter>(
                         child: Row(
-                          children: <Widget>[
+                          children: const <Widget>[
                             Icon(
                               Icons.circle,
                               color: Colors.blue,
@@ -250,12 +250,12 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                             Text('Custom'),
                           ],
                         ),
-                        value: CustomEditorCropLayerPainter(),
+                        value: const CustomEditorCropLayerPainter(),
                       ),
                       const PopupMenuDivider(),
-                      const PopupMenuItem<EditorCropLayerPainter>(
+                      PopupMenuItem<EditorCropLayerPainter>(
                         child: Row(
-                          children: <Widget>[
+                          children: const <Widget>[
                             Icon(
                               CupertinoIcons.circle,
                               color: Colors.blue,
@@ -266,7 +266,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                             Text('Circle'),
                           ],
                         ),
-                        value: CircleEditorCropLayerPainter(),
+                        value: const CircleEditorCropLayerPainter(),
                       ),
                     ];
                   },
@@ -426,11 +426,11 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
 
       //await showBusyingDialog();
 
-      late EditImageInfo imageInfo;
+      Uint8List? fileData;
 
       /// native library
       if (useNative) {
-        imageInfo = await cropImageDataWithNativeLibrary(
+        fileData = await cropImageDataWithNativeLibrary(
             state: editorKey.currentState!);
       } else {
         ///delay due to cropImageDataWithDartLibrary is time consuming on main thread
@@ -439,12 +439,11 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
         //await Future.delayed(Duration(milliseconds: 200));
 
         ///if you don't want to block ui, use compute/isolate,but it costs more time.
-        imageInfo =
+        fileData =
             await cropImageDataWithDartLibrary(state: editorKey.currentState!);
       }
-      final String? filePath = await ImageSaver.save(
-          'extended_image_cropped_image.${imageInfo.imageType == ImageType.jpg ? 'jpg' : 'gif'}',
-          imageInfo.data!);
+      final String? filePath =
+          await ImageSaver.save('extended_image_cropped_image.jpg', fileData!);
       // var filePath = await ImagePickerSaver.saveFile(fileData: fileData);
 
       msg = 'save image : $filePath';

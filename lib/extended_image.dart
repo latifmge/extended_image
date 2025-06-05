@@ -12,7 +12,6 @@ export 'src/gesture/page_view/gesture_page_view.dart';
 export 'src/gesture/slide_page.dart';
 export 'src/gesture/slide_page_handler.dart';
 export 'src/gesture/utils.dart';
-export 'src/gesture_detector/official.dart';
 export 'src/image/painting.dart';
 export 'src/image/raw_image.dart';
 export 'src/image/render_image.dart';

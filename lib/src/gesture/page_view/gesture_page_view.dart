@@ -1,13 +1,11 @@
 import 'package:extended_image/extended_image.dart';
-
-import 'package:extended_image/src/gesture_detector/official.dart';
-
+import 'package:extended_image/src/gesture_detector/drag.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
-export 'page_controller/official.dart';
 export 'rendering/sliver_fill.dart';
+export 'widgets/page_controller.dart';
 export 'widgets/sliver_fill.dart';
 
 part 'widgets/page_view.dart';
@@ -20,17 +18,15 @@ final ExtendedPageController _defaultPageController = ExtendedPageController();
 const PageScrollPhysics _kPagePhysics = PageScrollPhysics();
 const ScrollPhysics _defaultScrollPhysics = NeverScrollableScrollPhysics();
 
-PageMetrics _getTestPageMetrics(BuildContext context) {
-  return PageMetrics(
-    axisDirection: AxisDirection.down,
-    minScrollExtent: 0,
-    maxScrollExtent: 10,
-    pixels: 5,
-    viewportDimension: 10,
-    viewportFraction: 1.0,
-    devicePixelRatio: View.of(context).devicePixelRatio,
-  );
-}
+final PageMetrics _testPageMetrics = PageMetrics(
+  axisDirection: AxisDirection.down,
+  minScrollExtent: 0,
+  maxScrollExtent: 10,
+  pixels: 5,
+  viewportDimension: 10,
+  viewportFraction: 1.0,
+  devicePixelRatio: 1.0,
+);
 
 /// whether should scoll page
 bool _defaultCanScrollPage(GestureDetails? gestureDetails) => true;
@@ -48,7 +44,6 @@ class ExtendedImageGesturePageView extends StatefulWidget {
     List<Widget> children = const <Widget>[],
     CanScrollPage? canScrollPage,
     this.preloadPagesCount = 0,
-    this.shouldAccpetHorizontalOrVerticalDrag,
   })  : controller = controller ?? _defaultPageController,
         childrenDelegate = SliverChildListDelegate(children),
         physics = physics != null
@@ -81,7 +76,6 @@ class ExtendedImageGesturePageView extends StatefulWidget {
     int? itemCount,
     CanScrollPage? canScrollPage,
     this.preloadPagesCount = 0,
-    this.shouldAccpetHorizontalOrVerticalDrag,
   })  : controller = controller ?? _defaultPageController,
         childrenDelegate =
             SliverChildBuilderDelegate(itemBuilder, childCount: itemCount),
@@ -104,7 +98,6 @@ class ExtendedImageGesturePageView extends StatefulWidget {
     CanScrollPage? canScrollPage,
     required this.childrenDelegate,
     this.preloadPagesCount = 0,
-    this.shouldAccpetHorizontalOrVerticalDrag,
   })  : controller = controller ?? _defaultPageController,
         physics = _defaultScrollPhysics,
         canScrollPage = canScrollPage ?? _defaultCanScrollPage,
@@ -164,11 +157,6 @@ class ExtendedImageGesturePageView extends StatefulWidget {
   /// The count of pre-built pages
   final int preloadPagesCount;
 
-  /// Whether should accpet horizontal or vertical drag at that time
-  /// You can custom it by your base
-  final ShouldAccpetHorizontalOrVerticalDrag?
-      shouldAccpetHorizontalOrVerticalDrag;
-
   @override
   ExtendedImageGesturePageViewState createState() =>
       ExtendedImageGesturePageViewState();
@@ -202,7 +190,6 @@ class ExtendedImageGesturePageViewState
   @override
   void initState() {
     super.initState();
-
     _gestureAnimation = GestureAnimation(this, offsetCallBack: (Offset value) {
       final GestureDetails? gestureDetails =
           extendedImageGestureState?.gestureDetails;
@@ -223,10 +210,10 @@ class ExtendedImageGesturePageViewState
             widget.controller.shouldIgnorePointerWhenScrolling) {
       bool canMove = true;
 
-      // user's physics
+      ///user's physics
       if (widget.physics.parent != null) {
-        canMove = widget.physics.parent!
-            .shouldAcceptUserOffset(_getTestPageMetrics(context));
+        canMove =
+            widget.physics.parent!.shouldAcceptUserOffset(_testPageMetrics);
       }
       if (canMove) {
         switch (widget.scrollDirection) {
@@ -238,8 +225,6 @@ class ExtendedImageGesturePageViewState
                 () => ExtendedVerticalDragGestureRecognizer(
                   canHorizontalOrVerticalDrag: canHorizontalOrVerticalDrag,
                   debugOwner: this,
-                  shouldAccpetHorizontalOrVerticalDrag:
-                      widget.shouldAccpetHorizontalOrVerticalDrag,
                 ),
                 (ExtendedVerticalDragGestureRecognizer instance) {
                   instance
@@ -264,8 +249,6 @@ class ExtendedImageGesturePageViewState
                 () => ExtendedHorizontalDragGestureRecognizer(
                   canHorizontalOrVerticalDrag: canHorizontalOrVerticalDrag,
                   debugOwner: this,
-                  shouldAccpetHorizontalOrVerticalDrag:
-                      widget.shouldAccpetHorizontalOrVerticalDrag,
                 ),
                 (ExtendedHorizontalDragGestureRecognizer instance) {
                   instance
@@ -343,8 +326,7 @@ class ExtendedImageGesturePageViewState
     );
 
     if (widget.physics.parent == null ||
-        widget.physics.parent!
-            .shouldAcceptUserOffset(_getTestPageMetrics(context))) {
+        widget.physics.parent!.shouldAcceptUserOffset(_testPageMetrics)) {
       result = RawGestureDetector(
         gestures: _gestureRecognizers,
         behavior: HitTestBehavior.opaque,

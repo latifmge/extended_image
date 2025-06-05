@@ -65,12 +65,13 @@ class _SimpleImageEditorState extends State<SimpleImageEditor> {
     }
     _cropping = true;
     try {
-      final EditImageInfo fileData = kIsWeb
-          ? (await cropImageDataWithDartLibrary(state: editorKey.currentState!))
+      final Uint8List fileData = Uint8List.fromList(kIsWeb
+          ? (await cropImageDataWithDartLibrary(
+              state: editorKey.currentState!))!
           : (await cropImageDataWithNativeLibrary(
-              state: editorKey.currentState!));
-      final String? fileFath = await ImageSaver.save(
-          'extended_image_cropped_image.jpg', fileData.data!);
+              state: editorKey.currentState!))!);
+      final String? fileFath =
+          await ImageSaver.save('extended_image_cropped_image.jpg', fileData);
       showToast('save image : $fileFath');
     } finally {
       _cropping = false;
